@@ -42,9 +42,33 @@ public class Mouse {
 	
 
 	public void updateOrientation(double[] orientation) {
+		
+		if (!showApp && Math.abs(orientation[2]) > 50)
+		{
+			showAppStrip();
+			showApp = true;
+			roll = orientation[2];
+		}
+		else if (showApp)
+		{
+			if (Math.abs(orientation[2] - roll) > 10)
+			{
+				if (orientation[2] < roll)
+				{
+					r.keyPress(KeyEvent.VK_LEFT);
+				}
+				else 
+				{
+					r.keyPress(KeyEvent.VK_RIGHT);
+				}
+				roll = orientation[2];
+			}
+		}
+		else {
 			x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
 			y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
-			r.mouseMove((int) x, (int) y);
+			//r.mouseMove((int) x, (int) y);
+		}
 	}
 
 	public void hideAppStrip() {
@@ -66,6 +90,10 @@ public class Mouse {
 
 	public void leftclick() {
 		r.mousePress(InputEvent.BUTTON1_MASK);
+		if (showApp) {
+			showApp = false;
+			hideAppStrip();
+		}
 		r.mouseRelease(InputEvent.BUTTON1_MASK);
 	}
 	
