@@ -19,13 +19,16 @@ public class Mouse {
 	double width;
 	LinkedList<Double> smoothx;
 	LinkedList<Double> smoothy;
+	double orientation[];
 	final double screenWidth = .3589; //width of this machine's screen in meters
 	final double screenHeight = .2471; //height of this machine's screen in meters 
 	double x;
 	double y;
-	boolean showApp = false;
+	ShowAppThread showAppThread;
+	boolean showApp;
 	
 	public Mouse(double[][] canonicalOrientations) {
+		showApp = false;
 		co = canonicalOrientations;
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		width = screenSize.getWidth();
@@ -39,23 +42,60 @@ public class Mouse {
 	}
 	
 	
-	
+	private class ShowAppThread extends Thread {
+		
+		private double currentOrientation;
+		public ShowAppThread(Robot r, double startOrientation) {
+			currentOrientation = startOrientation;
+		}
+		
+		public void run() {
+			while (true) {
+				synchronized(orientation) {
+					if (orientation[0] > 80.0)
+					{
+						showApp = false;
+						hideAppStrip();
+					}
+					showAppStrip();
+					double dif = orientation[1] - currentOrientation;
+					if (Math.abs(dif) > 5.0)
+					{
+						if (dif > 0)
+							r.keyPress(KeyEvent.VK_LEFT);
+						else
+							r.keyPress(KeyEvent.VK_RIGHT);
+						currentOrientation = orientation[1];
+					}
+				}
+			}
+		}
+		
+		public void hideAppStrip() {
+			r.keyRelease(KeyEvent.VK_META);	
+			r.keyRelease(KeyEvent.VK_TAB);
+		}
+		
+		public void showAppStrip() {
+			r.keyPress(KeyEvent.VK_META);
+			r.keyPress(KeyEvent.VK_TAB);
+		}
+	}
 
 	public void updateOrientation(double[] orientation) {
 			x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
 			y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
-			r.mouseMove((int) x, (int) y);
+			synchronized(orientation) {
+			this.orientation = orientation;
+			if ((Math.abs(orientation[1]) > 50) && !showApp) {
+				showApp = true;
+				showAppThread = new ShowAppThread(r, orientation[1]);
+			} else if (!showApp) {
+				r.mouseMove((int) x, (int) y); 
+			}
+		}
 	}
 
-	public void hideAppStrip() {
-		r.keyRelease(KeyEvent.VK_META);		
-	}
-	
-	public void showAppStrip() {
-		r.keyPress(KeyEvent.VK_META);
-		r.keyPress(KeyEvent.VK_TAB);
-		//r.keyRelease(KeyEvent.VK_TAB);
-	}
 	
 	public void navigateToApp(double y_orientation){
 		if (y_orientation >= 45)

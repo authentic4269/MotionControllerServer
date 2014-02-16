@@ -26,7 +26,6 @@ public class PhoneRemote {
 
 	}
 	
-	public static Mutex mutex_orientation;
 	public static double orientation[];
 	double lastAcceleration[];
 	double canonicalOrientations[][] = new double[4][3];
@@ -43,7 +42,6 @@ public class PhoneRemote {
 	
 	
 	public PhoneRemote() {
-		mutex_orientation = new Mutex();
 		gui = new SwingOrientation();
 		gui.run();	
 		initializeOrientationFields();
