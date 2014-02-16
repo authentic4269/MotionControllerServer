@@ -149,29 +149,12 @@ public class PhoneRemote {
 			prevTime  = time;
 			
 		}
+		mouse.newAcceleration(curAcceleration);
 		lastAcceleration = curAcceleration;
-	}
-	
-	private double[] updatePosition(double[] prevVelocity, double[] currVelocity, double prevTime, double curTime){
-		double[] newPosition = new double[3];
-		for(int i= 0; i<3; i++){
-			newPosition[i] = prevPosition[i] + trapezoidArea(prevVelocity[i], currVelocity[i], prevTime, curTime);
-		}
-		return newPosition;
-	}
-	
-	private double[] updateVelocity(double[] prevAccel, double[] currAccel, double prevTime, double curTime){
-		double[] newVelocity= new double[3];
-		for(int i= 0; i<3; i++){
-			newVelocity[i] = trapezoidArea(prevAccel[i], currAccel[i], prevTime, curTime);
-		}
 		
-		return newVelocity;
 	}
 	
-	private double trapezoidArea(double start, double end, double startTime, double endTime){
-		return (start + ((end - start)/2))*(endTime - startTime)/1000;
-	}
+
 
 	public void calibrate() {
 		int i;

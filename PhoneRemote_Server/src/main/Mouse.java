@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 public class Mouse {
@@ -21,6 +22,7 @@ public class Mouse {
 	final double screenHeight = .2471; //height of this machine's screen in meters 
 	double x;
 	double y;
+	final double yAccelThreshold = 10; //min y acceleration which causes the app strip to be display
 	
 	public Mouse(double[][] canonicalOrientations) {
 		co = canonicalOrientations;
@@ -41,12 +43,13 @@ public class Mouse {
 		r.mouseMove((int) x, (int) y);
 	}
 	
-	public void updateCoordinates(double[] currentPosition){
-		
-		int newXCoord = (int) Math.floor((currentPosition[0]/screenWidth)*width);
-		int newYCoord = (int) (height - Math.floor((currentPosition[1]/screenHeight)*height));
-		System.out.println("x:" + newXCoord + ", y:" + newYCoord);
-		//r.mouseMove(newXCoord, newYCoord);
+	public void newAcceleration(double[] acceleration){
+		double xAccel = acceleration[0];
+		double yAccel = acceleration[1];
+		double zAccel = acceleration[2];
+		System.out.println(yAccel);
+		if (yAccel > yAccelThreshold)
+			displayAppStrip();
 	}
 
 	public void leftclick() {
@@ -67,6 +70,14 @@ public class Mouse {
 				e.printStackTrace();
 			}
 			r.mouseRelease(InputEvent.BUTTON3_MASK);
+	}
+	
+	public void displayAppStrip(){
+		r.keyPress(KeyEvent.VK_META);
+		r.keyPress(KeyEvent.VK_TAB);
+		r.keyRelease(KeyEvent.VK_TAB);
+		
+		
 	}
 
 }
