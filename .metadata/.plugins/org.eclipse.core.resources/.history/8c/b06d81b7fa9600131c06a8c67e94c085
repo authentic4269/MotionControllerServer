@@ -29,9 +29,9 @@ public class EventHandler extends Thread {
 		
 		while(true){
 			try {
-				synchronized(open){
+				appStrip.lock();
 				open.wait();
-				}
+				appStrip.unlock();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

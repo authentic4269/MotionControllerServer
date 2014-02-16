@@ -7,31 +7,24 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
-
 public class EventHandler extends Thread {
-	public Lock appStrip;
+	private Lock eventLock;
 	public Condition open;
 	private Mouse mouse;
-	public Mutex closeStrip;
 	boolean displayUp;  
 	
 	//determine how to solve AWTExceptions 
 	public EventHandler(Mouse mouse) throws AWTException{
-		appStrip = new ReentrantLock();
-		open = appStrip.newCondition();
-		closeStrip = new Mutex();
+		eventLock = new ReentrantLock();
+		open = eventLock.newCondition();
 		displayUp = false;
 		this.mouse = mouse;
 		start();
 	}
 	public void run(){
-		
 		while(true){
 			try {
-				synchronized(open){
 				open.wait();
-				}
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

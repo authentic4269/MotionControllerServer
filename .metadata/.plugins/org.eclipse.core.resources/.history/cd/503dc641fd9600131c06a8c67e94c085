@@ -19,6 +19,7 @@ public class PhoneSocketServer {
 		try {
 			myService = new ServerSocket(3000);
 			phoneSocket = myService.accept();
+			System.out.println(phoneSocket.getInputStream() == null);
 			phoneData = new BufferedReader(new InputStreamReader(phoneSocket.getInputStream()));
 		
 			while (true) {
