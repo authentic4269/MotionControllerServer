@@ -61,7 +61,7 @@ public class PhoneSocketServer {
 				}
 				else if (vectorType == 6) {
 					int data = input.getInt("data");
-					controller.zoom(data);
+					//controller.zoom(data);
 				}
 					
 			}
