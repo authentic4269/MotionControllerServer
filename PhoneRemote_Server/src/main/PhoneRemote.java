@@ -12,6 +12,8 @@ import java.util.LinkedList;
 
 import org.json.*;
 
+import com.sun.corba.se.impl.orbutil.concurrent.Mutex;
+
 import server.PhoneSocketServer;
 import java.awt.*;
 //This class contains the main method which reads in data from the 
@@ -28,60 +30,41 @@ public class PhoneRemote {
 		}
 	}
 	
-	double orientation[];
+	public static Mutex mutex_orientation;
+	public static double orientation[];
 	double lastAcceleration[];
-	long lastTime;
 	double canonicalOrientations[][] = new double[4][3];
 	double smooth[] = {-36, 9, 44, 69, 84, 89, 84, 69, 44, 9, -36};
 	double smooth2[] = {0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0};
 	double smoothDenom;
 	double smooth2Denom;
 	LinkedList<LinkedList<Double>> lastOrientations = new LinkedList<LinkedList<Double>>();
-	LinkedList<StampedList> lastAccels = new LinkedList<StampedList>();
+	LinkedList<LinkedList<Double>> lastAccels = new LinkedList<LinkedList<Double>>();
 	int calibrate = 0;
 	SwingOrientation gui;
 	private Mouse mouse = null;
-	
-	//acceleration related fields
-	final double delay = .02;
-	
-	private class StampedList {
-		public LinkedList<Double> values;
-		public long timeStamp;
-		
-		public StampedList()
-		{
-			values = new LinkedList<Double>();
-		}
-	}
-	
-	double[] prevVelocity = {0.0, 0.0, 0.0};  //will contain the most recent velocity vector 
-	double[] prevPosition; //contains the most recent coordinates of the phone relative to the bottom left corner of the computer screen 
-	private long prevTime = System.currentTimeMillis();
-	
-	
+	EventHandler gestures;
 
 	
-
+	
 	public PhoneRemote() throws AWTException{
+		mutex_orientation = new Mutex();
 		gui = new SwingOrientation();
 		gui.run();	
+		gestures = new EventHandler(mouse);
 		initializeOrientationFields();
 		initializeAccelerationFields();
 	}
 	
 	private void initializeAccelerationFields() {
-
 		int i, j;
-		prevVelocity = new double[3];
-		prevPosition = new double[3];
 		lastAcceleration = new double[3];
 		for (i = 0; i < 3; i++)
 		{
-			lastAccels.add(new StampedList());
+			lastAccels.add(new LinkedList<Double>());
 			for (j = 0; j < 10; j++)
 			{
-				lastAccels.get(i).values.add(0.0);
+				lastAccels.get(i).add(0.0);
 			}
 		}
 		for (i = 0; i < 10; i++)
@@ -95,7 +78,6 @@ public class PhoneRemote {
 		lastOrientations.add(new LinkedList<Double>());
 		lastOrientations.add(new LinkedList<Double>());
 		lastOrientations.add(new LinkedList<Double>());
-		prevTime = 0;
 		orientation = new double[3];
 		int i, j;
 		for (i = 0; i < 3; i++)
@@ -114,6 +96,12 @@ public class PhoneRemote {
 	}
 
 	public void updateOrientation(double[] vals){
+		try {
+			mutex_orientation.acquire();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		orientation = vals;
 		int i, j;
 		double smoothNumer;
@@ -133,20 +121,32 @@ public class PhoneRemote {
 		if (mouse != null)
 		{
 			mouse.updateOrientation(orientation);
+			
+		}
+		handleEvents(orientation);
+		mutex_orientation.release();
+		
+	}
+	
+	private void handleEvents(double[] orientation){
+		double x_orientation = orientation[0];
+		if(x_orientation > 90 && !gestures.displayUp){
+			gestures.open.notify();
+		}
+		else if (x_orientation > 90){
+			gestures.displayUp= false;
 		}
 	}
 
 	public void addAcceleration(double[] vals, long time) {
-		StampedList cur;
+		LinkedList<Double> cur;
 		int i, j;
 		double smoothNumer;
 		double curAcceleration[] = new double[3];
-		for (i = 0; i < 3; i++)
-		{
+		for (i = 0; i < 3; i++){
 			cur = lastAccels.get(i);
-			cur.values.removeFirst();
-			cur.values.add(vals[i]);
-			cur.timeStamp = time;
+			cur.removeFirst();
+			cur.add(vals[i]);
 			smoothNumer = 0.0;
 			for (j = 0; j < 10; j++)
 			{
@@ -154,16 +154,11 @@ public class PhoneRemote {
 			}
 			smoothNumer /= smooth2Denom;
 			curAcceleration[i] = smoothNumer;
-			prevTime  = time;
-			
 		}
-		mouse.newAcceleration(curAcceleration);
-		lastAcceleration = curAcceleration;
 		
+		lastAcceleration = curAcceleration;
 	}
 	
-
-
 	public void calibrate() {
 		int i;
 		for (i = 0; i < 3; i++)
@@ -179,8 +174,6 @@ public class PhoneRemote {
 		}
 	}
 	
-
-
 	public void leftclick() {
 		mouse.leftclick();
 	}

@@ -1,0 +1,53 @@
+package main;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class EventHandler extends Thread {
+	private Lock eventLock;
+	public Condition open;
+	private Mouse mouse;
+	boolean displayUp;  
+	
+	//determine how to solve AWTExceptions 
+	public EventHandler(Mouse mouse) throws AWTException{
+		eventLock = new ReentrantLock();
+		open = eventLock.newCondition();
+		displayUp = false;
+		this.mouse = mouse;
+		start();
+	}
+	public void run(){
+		while(true){
+			try {
+				open.wait();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mouse.showAppStrip();
+			displayUp = true;
+			while(displayUp){
+				selectApp();
+				try {
+					sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			mouse.hideAppStrip();
+		}
+	}
+	
+	public void selectApp(){
+		
+		
+	}
+	
+	
+}

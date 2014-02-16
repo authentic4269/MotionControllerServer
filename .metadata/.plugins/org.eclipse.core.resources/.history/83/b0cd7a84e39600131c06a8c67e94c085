@@ -1,0 +1,37 @@
+package main;
+
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
+
+public class EventHandler extends Thread {
+	final double yAccelThreshold = 10;  //any y acceleration greater than this threshold will trigger the display of the "app strip"
+	Robot eventBot;
+	
+	//determine how to solve AWTExceptions 
+	public EventHandler() throws AWTException{
+		eventBot = new Robot();
+		start();
+	}
+	public void newAcceleration(double[] acceleration){
+		double xAccel = acceleration[0];
+		double yAccel = acceleration[1];
+		double zAccel = acceleration[2];
+		if (yAccel > yAccelThreshold)
+			displayStrip();
+		}
+	
+	
+	public void displayAppStrip(){
+
+		eventBot.keyPress(KeyEvent.VK_META);
+		eventBot.keyPress(KeyEvent.VK_TAB);
+		eventBot.keyRelease(KeyEvent.VK_TAB);
+		
+		eventBot.keyRelease(KeyEvent.VK_META);
+		
+		
+	}
+	
+	
+}

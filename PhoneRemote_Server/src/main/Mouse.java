@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 public class Mouse {
-
+	
 	double[][] co;
 	double dif0;
 	double dif1;
@@ -22,7 +22,6 @@ public class Mouse {
 	final double screenHeight = .2471; //height of this machine's screen in meters 
 	double x;
 	double y;
-	final double yAccelThreshold = 10; //min y acceleration which causes the app strip to be display
 	
 	public Mouse(double[][] canonicalOrientations) {
 		co = canonicalOrientations;
@@ -42,14 +41,24 @@ public class Mouse {
 		y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
 		r.mouseMove((int) x, (int) y);
 	}
+
+	public void hideAppStrip() {
+		r.keyRelease(KeyEvent.VK_META);
+		
+		
+	}
 	
-	public void newAcceleration(double[] acceleration){
-		double xAccel = acceleration[0];
-		double yAccel = acceleration[1];
-		double zAccel = acceleration[2];
-		System.out.println(yAccel);
-		if (yAccel > yAccelThreshold)
-			displayAppStrip();
+	public void showAppStrip() {
+		r.keyPress(KeyEvent.VK_META);
+		r.keyPress(KeyEvent.VK_TAB);
+		r.keyRelease(KeyEvent.VK_TAB);
+	}
+	
+	public void navigateToApp(double y_orientation){
+		if (y_orientation >= 45)
+			r.keyPress(KeyEvent.VK_LEFT);
+		else if (y_orientation <= -45)
+			r.keyPress(KeyEvent.VK_RIGHT);
 	}
 
 	public void leftclick() {
@@ -71,13 +80,6 @@ public class Mouse {
 			}
 			r.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
-	
-	public void displayAppStrip(){
-		r.keyPress(KeyEvent.VK_META);
-		r.keyPress(KeyEvent.VK_TAB);
-		r.keyRelease(KeyEvent.VK_TAB);
-		
-		
-	}
+
 
 }
