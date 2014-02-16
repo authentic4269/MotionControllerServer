@@ -21,14 +21,10 @@ public class PhoneRemote {
 	
 	public static void main(String[] args) {
 		PhoneRemote controller;
-		try {
+
 			controller = new PhoneRemote();
 			PhoneSocketServer connection = new PhoneSocketServer(controller);
-			gestures = new EventHandler(mouse);
-		} catch (AWTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 	
 	public static Mutex mutex_orientation;
@@ -43,12 +39,11 @@ public class PhoneRemote {
 	LinkedList<LinkedList<Double>> lastAccels = new LinkedList<LinkedList<Double>>();
 	int calibrate = 0;
 	SwingOrientation gui;
-	private static Mouse mouse = null;
-	static EventHandler gestures;
+	private Mouse mouse = null;
 
 	
 	
-	public PhoneRemote() throws AWTException{
+	public PhoneRemote() {
 		mutex_orientation = new Mutex();
 		gui = new SwingOrientation();
 		gui.run();	
@@ -96,12 +91,6 @@ public class PhoneRemote {
 	}
 
 	public void updateOrientation(double[] vals){
-		try {
-			mutex_orientation.acquire();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		orientation = vals;
 		int i, j;
 		double smoothNumer;
@@ -121,23 +110,6 @@ public class PhoneRemote {
 		if (mouse != null)
 		{
 			mouse.updateOrientation(orientation);
-			
-		}
-		//System.out.println("X: " + orientation[0] + ", Y:" + orientation[1]);
-		handleEvents(orientation);
-		mutex_orientation.release();
-		
-	}
-	
-	private void handleEvents(double[] orientation){
-		double x_orientation = orientation[0];
-		if(x_orientation > 90 && !gestures.displayUp){
-			synchronized(gestures.open){
-			gestures.open.notify();
-			}
-		}
-		else if (x_orientation > 90){
-			gestures.displayUp= false;
 		}
 	}
 
@@ -158,7 +130,6 @@ public class PhoneRemote {
 			smoothNumer /= smooth2Denom;
 			curAcceleration[i] = smoothNumer;
 		}
-		
 		lastAcceleration = curAcceleration;
 	}
 	

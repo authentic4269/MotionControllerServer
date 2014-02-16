@@ -13,6 +13,7 @@ public class Mouse {
 	double[][] co;
 	double dif0;
 	double dif1;
+	double roll;
 	Robot r;
 	double height;
 	double width;
@@ -22,6 +23,7 @@ public class Mouse {
 	final double screenHeight = .2471; //height of this machine's screen in meters 
 	double x;
 	double y;
+	boolean showApp = false;
 	
 	public Mouse(double[][] canonicalOrientations) {
 		co = canonicalOrientations;
@@ -35,23 +37,48 @@ public class Mouse {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
 
 	public void updateOrientation(double[] orientation) {
-		x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
-		y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
-		//r.mouseMove((int) x, (int) y);
+		
+		if (!showApp && Math.abs(orientation[2]) > 50)
+		{
+			showAppStrip();
+			showApp = true;
+			roll = orientation[2];
+		}
+		else if (showApp)
+		{
+			if (Math.abs(orientation[2] - roll) > 10)
+			{
+				if (orientation[2] < roll)
+				{
+					r.keyPress(KeyEvent.VK_LEFT);
+				}
+				else 
+				{
+					r.keyPress(KeyEvent.VK_RIGHT);
+				}
+				roll = orientation[2];
+			}
+		}
+		else {
+			x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
+			y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
+			//r.mouseMove((int) x, (int) y);
+		}
 	}
 
 	public void hideAppStrip() {
-		r.keyRelease(KeyEvent.VK_META);
-		
-		
+		r.keyRelease(KeyEvent.VK_META);		
 	}
 	
 	public void showAppStrip() {
 		r.keyPress(KeyEvent.VK_META);
 		r.keyPress(KeyEvent.VK_TAB);
-		r.keyRelease(KeyEvent.VK_TAB);
+		//r.keyRelease(KeyEvent.VK_TAB);
 	}
 	
 	public void navigateToApp(double y_orientation){
@@ -63,21 +90,15 @@ public class Mouse {
 
 	public void leftclick() {
 		r.mousePress(InputEvent.BUTTON1_MASK);
-		try {
-			Thread.sleep(10);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (showApp) {
+			showApp = false;
+			hideAppStrip();
 		}
 		r.mouseRelease(InputEvent.BUTTON1_MASK);
 	}
 	
 	public void rightclick() {
 			r.mousePress(InputEvent.BUTTON3_MASK);
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 			r.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
 
@@ -94,10 +115,10 @@ public class Mouse {
 
 	public void zoom(int data) {
 		try {
-			r.keyPress(KeyEvent.VK_META);
+			/*r.keyPress(KeyEvent.VK_META);
 			r.keyPress(KeyEvent.VK_MINUS);
 			r.keyRelease(KeyEvent.VK_META);
-			r.keyRelease(KeyEvent.VK_MINUS);/*
+			r.keyRelease(KeyEvent.VK_MINUS);
 			int k;
 			if (data < 0)
 			{
