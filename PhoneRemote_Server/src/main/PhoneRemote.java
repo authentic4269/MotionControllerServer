@@ -17,6 +17,17 @@ import java.awt.*;
 //This class contains the main method which reads in data from the 
 public class PhoneRemote {
 	
+	public static void main(String[] args) {
+		PhoneRemote controller;
+		try {
+			controller = new PhoneRemote();
+			PhoneSocketServer connection = new PhoneSocketServer(controller);
+		} catch (AWTException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	double orientation[];
 	double lastAcceleration[];
 	long lastTime;
@@ -49,10 +60,7 @@ public class PhoneRemote {
 	private long prevTime = System.currentTimeMillis();
 	
 	
-	public static void main(String[] args) throws AWTException  {
-		PhoneRemote controller = new PhoneRemote();
-		PhoneSocketServer connection = new PhoneSocketServer(controller);
-	}
+
 	
 
 	public PhoneRemote() throws AWTException{
