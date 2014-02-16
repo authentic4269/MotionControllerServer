@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+<<<<<<< HEAD
+	<classpathentry kind="lib" path="/Users/christophermeier/Desktop/org.json-20120521.jar"/>
+=======
+	<classpathentry kind="lib" path="/Users/mitchvogel/Downloads/org.json-20120521.jar"/>
+>>>>>>> 28c40a4cc562bf8576a99cffd3473b0e70a5376f
+	<classpathentry kind="output" path="bin"/>
+</classpath>

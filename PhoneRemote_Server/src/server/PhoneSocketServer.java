@@ -19,9 +19,9 @@ public class PhoneSocketServer {
 		try {
 			myService = new ServerSocket(3000);
 			phoneSocket = myService.accept();
-			phoneData = new BufferedReader(new InputStreamReader(
-					phoneSocket.getInputStream()));
-
+			System.out.println(phoneSocket.getInputStream() == null);
+			phoneData = new BufferedReader(new InputStreamReader(phoneSocket.getInputStream()));
+		
 			while (true) {
 				String line = null;
 				JSONObject input = null;
@@ -55,12 +55,21 @@ public class PhoneSocketServer {
 				else if (vectorType == 4) {
 					controller.rightclick();
 				}
+				else if (vectorType == 5) {
+					int data = input.getInt("data");
+					int down = input.getInt("down");
+					controller.scrollMouse(data, down);
+				}
+				else if (vectorType == 6) {
+					int data = input.getInt("data");
+					controller.zoom(data);
+				}
 					
 			}
 		}
 
 		catch (Exception e) {
-			System.out.println(e);
+			System.out.println(e.getStackTrace());
 		}
 	}
 }
