@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 public class Mouse {
-
+	
 	double[][] co;
 	double dif0;
 	double dif1;
@@ -41,13 +41,24 @@ public class Mouse {
 		y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
 		//r.mouseMove((int) x, (int) y);
 	}
-	
-	public void updateCoordinates(double[] currentPosition){
+
+	public void hideAppStrip() {
+		r.keyRelease(KeyEvent.VK_META);
 		
-		int newXCoord = (int) Math.floor((currentPosition[0]/screenWidth)*width);
-		int newYCoord = (int) (height - Math.floor((currentPosition[1]/screenHeight)*height));
-		System.out.println("x:" + newXCoord + ", y:" + newYCoord);
-		//r.mouseMove(newXCoord, newYCoord);
+		
+	}
+	
+	public void showAppStrip() {
+		r.keyPress(KeyEvent.VK_META);
+		r.keyPress(KeyEvent.VK_TAB);
+		r.keyRelease(KeyEvent.VK_TAB);
+	}
+	
+	public void navigateToApp(double y_orientation){
+		if (y_orientation >= 45)
+			r.keyPress(KeyEvent.VK_LEFT);
+		else if (y_orientation <= -45)
+			r.keyPress(KeyEvent.VK_RIGHT);
 	}
 
 	public void leftclick() {
@@ -110,6 +121,5 @@ public class Mouse {
 			e.printStackTrace();
 		}
 	}
-
 
 }

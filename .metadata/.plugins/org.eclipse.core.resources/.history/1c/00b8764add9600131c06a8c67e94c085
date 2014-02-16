@@ -1,0 +1,29 @@
+package main;
+
+import java.awt.event.KeyEvent;
+
+public class EventHandler {
+	final double yAccelThreshold;
+	
+	public void newAcceleration(double[] acceleration){
+		double xAccel = acceleration[0];
+		double yAccel = acceleration[1];
+		double zAccel = acceleration[2];
+		if (yAccel > yAccelThreshold)
+			displayStrip();
+		}
+	
+	
+	public void displayAppStrip(){
+
+		r.keyPress(KeyEvent.VK_META);
+		r.keyPress(KeyEvent.VK_TAB);
+		r.keyRelease(KeyEvent.VK_TAB);
+		
+		r.keyRelease(KeyEvent.VK_META);
+		
+		
+	}
+	
+	
+}

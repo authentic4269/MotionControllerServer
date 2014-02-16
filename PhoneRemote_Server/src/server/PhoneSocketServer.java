@@ -19,9 +19,9 @@ public class PhoneSocketServer {
 		try {
 			myService = new ServerSocket(3000);
 			phoneSocket = myService.accept();
-			phoneData = new BufferedReader(new InputStreamReader(
-					phoneSocket.getInputStream()));
-
+			System.out.println(phoneSocket.getInputStream() == null);
+			phoneData = new BufferedReader(new InputStreamReader(phoneSocket.getInputStream()));
+		
 			while (true) {
 				String line = null;
 				JSONObject input = null;
@@ -69,7 +69,7 @@ public class PhoneSocketServer {
 		}
 
 		catch (Exception e) {
-			System.out.println(e);
+			System.out.println(e.getStackTrace());
 		}
 	}
 }
