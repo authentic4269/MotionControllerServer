@@ -24,7 +24,6 @@ public class PhoneRemote {
 		try {
 			controller = new PhoneRemote();
 			PhoneSocketServer connection = new PhoneSocketServer(controller);
-			gestures = new EventHandler(mouse);
 		} catch (AWTException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -43,8 +42,8 @@ public class PhoneRemote {
 	LinkedList<LinkedList<Double>> lastAccels = new LinkedList<LinkedList<Double>>();
 	int calibrate = 0;
 	SwingOrientation gui;
-	private static Mouse mouse = null;
-	static EventHandler gestures;
+	private Mouse mouse = null;
+	EventHandler gestures;
 
 	
 	
@@ -52,6 +51,7 @@ public class PhoneRemote {
 		mutex_orientation = new Mutex();
 		gui = new SwingOrientation();
 		gui.run();	
+		gestures = new EventHandler(mouse);
 		initializeOrientationFields();
 		initializeAccelerationFields();
 	}
@@ -123,7 +123,7 @@ public class PhoneRemote {
 			mouse.updateOrientation(orientation);
 			
 		}
-		//System.out.println("X: " + orientation[0] + ", Y:" + orientation[1]);
+		System.out.println("X: " + orientation[0] + ", Y:" + orientation[1]);
 		handleEvents(orientation);
 		mutex_orientation.release();
 		
@@ -183,14 +183,5 @@ public class PhoneRemote {
 	
 	public void rightclick() {
 		mouse.rightclick();
-	}
-
-	public void scrollMouse(int data, int down) {
-		mouse.scrollMouse(data, down);
-		
-	}
-
-	public void zoom(int data) {
-		mouse.zoom(data);
 	}
 }
