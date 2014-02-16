@@ -205,4 +205,13 @@ public class PhoneRemote {
 	public void rightclick() {
 		mouse.rightclick();
 	}
+
+	public void scrollMouse(int data, int down) {
+		mouse.scrollMouse(data, down);
+		
+	}
+
+	public void zoom(int data) {
+		mouse.zoom(data);
+	}
 }

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 
 public class Mouse {
@@ -38,7 +39,7 @@ public class Mouse {
 	public void updateOrientation(double[] orientation) {
 		x = width * (orientation[0] - co[1][0]) / (co[0][0] - co[1][0]);
 		y = height * (orientation[1] - co[2][1]) / (co[3][1] - co[2][1]);
-		r.mouseMove((int) x, (int) y);
+		//r.mouseMove((int) x, (int) y);
 	}
 	
 	public void updateCoordinates(double[] currentPosition){
@@ -68,5 +69,47 @@ public class Mouse {
 			}
 			r.mouseRelease(InputEvent.BUTTON3_MASK);
 	}
+
+	public void scrollMouse(int data, int down) {
+		if (down == 0)
+		{
+			r.mouseWheel(-data);
+		}
+		else
+		{
+			r.mouseWheel(data);
+		}
+	}
+
+	public void zoom(int data) {
+		try {
+			r.keyPress(KeyEvent.VK_META);
+			r.keyPress(KeyEvent.VK_MINUS);
+			r.keyRelease(KeyEvent.VK_META);
+			r.keyRelease(KeyEvent.VK_MINUS);/*
+			int k;
+			if (data < 0)
+			{
+				k = KeyEvent.VK_MINUS;
+			}
+			else
+			{
+				k = KeyEvent.VK_PLUS;
+			}	
+			r.keyPress(k);
+			while (data > 0)
+			{
+				data--;
+			}
+			r.keyRelease(KeyEvent.VK_META);
+			r.keyRelease(k); */
+		}
+		catch (Exception e)
+		{
+			Throwable s = e.getCause();
+			e.printStackTrace();
+		}
+	}
+
 
 }
