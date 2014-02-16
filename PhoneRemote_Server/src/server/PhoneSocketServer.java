@@ -54,6 +54,15 @@ public class PhoneSocketServer {
 				else if (vectorType == 4) {
 					controller.rightclick();
 				}
+				else if (vectorType == 5) {
+					int data = input.getInt("data");
+					int down = input.getInt("down");
+					controller.scrollMouse(data, down);
+				}
+				else if (vectorType == 6) {
+					int data = input.getInt("data");
+					controller.zoom(data);
+				}
 					
 			}
 		}
